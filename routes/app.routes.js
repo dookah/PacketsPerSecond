@@ -4,7 +4,7 @@ let router = express.Router();
 // Local Imports
 let appController = require('../controllers/app.controller')
 
-router.get('/', appController.root)
+router.get('/', appController.home)
 
 
 // Expose the routes to app.js

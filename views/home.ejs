@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+</head>
+<style>
+    .number {
+        border-radius: 50%;
+        background-color: white;
+    }
+</style>
+
+<body class="has-background-info">
+
+
+    <div class="container">
+        <br>
+        <h1 class="title is-1 has-text-white has-text-weight-light">Packets Per Second Calculator</h1>
+        <br>
+        <!-- Gbps Forwarding rate increase-->
+        <div class="box">
+
+            <div class="columns is-vcentered">
+                <div class="column is-one-fifth has-text-centered">
+                    <span class="is-size-1 number">1</span>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label has-text-dark is-size-3 has-text-weight-light">Device forwarding
+                            rate</label>
+                        <div class="control">
+                            <input type="number" class="input" type="text" placeholder="128" id="forwardingRateField">
+                        </div>
+                        <p class="help has-text-weight-light has-text-dark tag">In Gbps </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="box">
+            <div class="columns is-vcentered">
+                <div class="column is-one-fifth has-text-centered">
+                    <span class="is-size-1 number">2</span>
+                </div>
+                <div class="column">
+                    <div class="field ">
+                        <label class="label has-text-dark  is-size-3 has-text-weight-light">MTU</label>
+                        <div class="control">
+                            <input type="number" class="input" type="text" placeholder="1500" id="packetSizeField">
+                            
+                        </div>
+                        <p class="help has-text-weight-light has-text-dark tag">In Bytes </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="has-background-white box">
+            <div class="columns is-vcentered">
+                <div class="column is-one-fifth has-text-centered">
+                    <span class="is-size-1 number">3</span>
+                </div>
+                <div class="column">
+                    <h2 class="title has-text-weight-light ">Million Packets Per Second (Mpps)</h2>
+                    <h2 class="subtitle has-text-weight-light" id="result">x</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    document.getElementById("forwardingRateField");
+    document.getElementById("packetSizeField")
+
+    document.getElementsByTagName("BODY")[0].addEventListener("input", function(){
+        let forwardingRate = document.getElementById("forwardingRateField").value;
+        let packetSize = document.getElementById("packetSizeField").value;
+
+
+        millionPacketsPerSecond = calculatePPS(forwardingRate, packetSize);
+
+        if(forwardingRate != "" && packetSize != "")
+            document.getElementById("result").textContent = millionPacketsPerSecond;
+    })
+
+
+    function calculatePPS(forwardingRate, packetSize){
+    
+
+        //Get the forwarding rate into bits
+        let bitsPerSeconds = forwardingRate * 1000000000;   
+
+        //Conver the forwarding rate to Bytes
+        let bytesPerSecond = bitsPerSeconds / 8;
+        
+        //find the number of packets per second
+        let packetsPerSecond = bytesPerSecond / packetSize;
+        
+        //Convert to million packets per second for convience
+        let millionPacketsPerSecond = packetsPerSecond / 1000000;
+
+        return millionPacketsPerSecond;
+    }
+    
+</script>

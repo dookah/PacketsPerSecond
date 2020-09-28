@@ -17,6 +17,13 @@ let path = require("path"); // Local path variables
 // --- Entry point for the sevrer ---
 let app = express() // Instantiate Express.js
 
+
+// here you set that you're using `ejs` template engine, and the
+// default extension is `ejs`
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+
 // Set up Sessions
 app.use(session({
     secret : uniqid(), //generate a unique key for the secret 
