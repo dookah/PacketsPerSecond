@@ -12,20 +12,16 @@
     }
 </style>
 
-<body class="has-background-info">
+<body class="has-background-white">
 
 
     <div class="container">
-        <br>
-        <h1 class="title is-1 has-text-white has-text-weight-light">Packets Per Second Calculator</h1>
-        <br>
+        <div class="section">
+            <h1 class="title is-1 has-text-centered">PPS Calculator</h1>
+        </div>
         <!-- Gbps Forwarding rate increase-->
-        <div class="box">
-
+        <div class="section">
             <div class="columns is-vcentered">
-                <div class="column is-one-fifth has-text-centered">
-                    <span class="is-size-1 number">1</span>
-                </div>
                 <div class="column">
                     <div class="field">
                         <label class="label has-text-dark is-size-3 has-text-weight-light">Device forwarding
@@ -38,20 +34,18 @@
                 </div>
             </div>
 
-        </div>
 
 
-        <div class="box">
+
             <div class="columns is-vcentered">
-                <div class="column is-one-fifth has-text-centered">
-                    <span class="is-size-1 number">2</span>
-                </div>
+
                 <div class="column">
                     <div class="field ">
-                        <label class="label has-text-dark  is-size-3 has-text-weight-light">MTU</label>
+                        <label class="label has-text-dark  is-size-3 has-text-weight-light">Average MTU</label>
                         <div class="control">
-                            <input type="number" class="input" type="text" placeholder="1500" id="packetSizeField">
-                            
+                            <input type="number" min="64" class="input" type="text" placeholder="1500"
+                                id="packetSizeField">
+
                         </div>
                         <p class="help has-text-weight-light has-text-dark tag">In Bytes </p>
                     </div>
@@ -59,18 +53,27 @@
             </div>
         </div>
 
-        <div class="has-background-white box">
-            <div class="columns is-vcentered">
-                <div class="column is-one-fifth has-text-centered">
-                    <span class="is-size-1 number">3</span>
-                </div>
-                <div class="column">
-                    <h2 class="title has-text-weight-light ">Million Packets Per Second (Mpps)</h2>
-                    <h2 class="subtitle has-text-weight-light" id="result">x</h2>
-                </div>
+        <div class="section">
+            <div class="box has-background-light">
+                <h2 class="subtitle is-2 has-text-weight-light has-text-centered" id="result">x</h2>
             </div>
         </div>
+
+
+        <div class="section">
+            <h2 class="subtitle is-4">Settings</h2>
+            <label class="checkbox">
+                <input type="checkbox" checked id="layerOneHeaders">
+                Layer One Headers (20 Bytes)
+            </label>
+            <br>
+            <label class="checkbox">
+                <input type="checkbox" id="vlanTag">
+                802.1Q Tags (4 Bytes)
+            </label>
+        </div>
     </div>
+
 
 </body>
 
@@ -80,34 +83,55 @@
     document.getElementById("forwardingRateField");
     document.getElementById("packetSizeField")
 
-    document.getElementsByTagName("BODY")[0].addEventListener("input", function(){
+    document.getElementsByTagName("BODY")[0].addEventListener("input", function () {
+
+        //Get the Two user input fields from the form
         let forwardingRate = document.getElementById("forwardingRateField").value;
         let packetSize = document.getElementById("packetSizeField").value;
 
+        //Update the fields values with the set options
+        packetSize = setOptions(packetSize);
 
+        //Calculate the PPS
         millionPacketsPerSecond = calculatePPS(forwardingRate, packetSize);
 
-        if(forwardingRate != "" && packetSize != "")
+        //If the user has entered something in both boxes render the result
+        if (forwardingRate != "" && packetSize != "")
             document.getElementById("result").textContent = millionPacketsPerSecond;
     })
 
 
-    function calculatePPS(forwardingRate, packetSize){
-    
-
+    function calculatePPS(forwardingRate, packetSize) {
         //Get the forwarding rate into bits
-        let bitsPerSeconds = forwardingRate * 1000000000;   
+        let bitsPerSeconds = forwardingRate * 1000000000;
 
         //Conver the forwarding rate to Bytes
         let bytesPerSecond = bitsPerSeconds / 8;
-        
+
         //find the number of packets per second
         let packetsPerSecond = bytesPerSecond / packetSize;
-        
+
         //Convert to million packets per second for convience
         let millionPacketsPerSecond = packetsPerSecond / 1000000;
 
         return millionPacketsPerSecond;
     }
-    
+
+
+    function setOptions(packetSize) {
+        let layerOneHeaders = document.getElementById("layerOneHeaders").checked;
+        let vlanTag = document.getElementById("vlanTag").checked;
+
+        console.log(layerOneHeaders)
+
+        //If the layer one headers are on (Default), add on the 12 Interframe Gap and 8 Byte Preamble
+        if (layerOneHeaders == true)
+            packetSize = parseInt(packetSize) + 12 + 8;
+
+        if (vlanTag == true)
+            packetSize = parseInt(packetSize) + 4;
+
+
+        return packetSize
+    }
 </script>
